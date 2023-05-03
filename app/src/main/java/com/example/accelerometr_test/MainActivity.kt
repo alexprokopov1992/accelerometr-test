@@ -5,10 +5,12 @@ import android.os.Bundle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.admanager.AdManagerAdView
+import com.google.android.gms.ads.admanager.AdManagerAdRequest
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mAdView : AdView
+    lateinit var mAdManagerAdView : AdManagerAdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,8 +18,8 @@ class MainActivity : AppCompatActivity() {
 
         MobileAds.initialize(this) {}
 
-        mAdView = findViewById(R.id.adView)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
+        mAdManagerAdView = findViewById(R.id.adManagerAdView)
+        val adRequest = AdManagerAdRequest.Builder().build()
+        mAdManagerAdView.loadAd(adRequest)
     }
 }

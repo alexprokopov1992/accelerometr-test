@@ -13,8 +13,8 @@
         android:theme="@style/Theme.Accelerometrtest"
         tools:targetApi="31">
         <meta-data
-            android:name="com.google.android.gms.ads.accelerometr-test"
-            android:value="ca-app-pub-5712910877845845~9722665864"/>
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5712910877845845~4185368348"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

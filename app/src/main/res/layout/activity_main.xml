@@ -7,13 +7,14 @@
 	android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.google.android.gms.ads.AdView
-		xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="138dp"
-        tools:layout_editor_absoluteY="679dp"
-		ads:adSize="BANNER"
-		ads:adUnitId="ca-app-pub-5712910877845845/9722665864"/>
+    <com.google.android.gms.ads.admanager.AdManagerAdView
+      xmlns:ads="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/adManagerAdView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_alignParentBottom="true"
+      ads:adSize="BANNER"
+      ads:adUnitId="ca-app-pub-5712910877845845/1176061628">
+	</com.google.android.gms.ads.admanager.AdManagerAdView>
 </androidx.constraintlayout.widget.ConstraintLayout>
