@@ -7,14 +7,24 @@
 	android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.google.android.gms.ads.admanager.AdManagerAdView
-      xmlns:ads="http://schemas.android.com/apk/res-auto"
-      android:id="@+id/adManagerAdView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:layout_alignParentBottom="true"
-      ads:adSize="BANNER"
-      ads:adUnitId="ca-app-pub-5712910877845845/1176061628">
-	</com.google.android.gms.ads.admanager.AdManagerAdView>
+	<com.google.android.gms.ads.AdView
+		android:id="@+id/adView"
+		android:layout_width="match_parent"
+		android:layout_height="100dp"
+		android:layout_centerHorizontal="true"
+		app:adSize="BANNER"
+		app:adUnitId="ca-app-pub-5712910877845845/1176061628"
+		tools:layout_editor_absoluteX="0dp"
+		tools:layout_editor_absoluteY="630dp"></com.google.android.gms.ads.AdView>
+
+	<TextView
+		android:id="@+id/textView3"
+		android:layout_width="130dp"
+		android:layout_height="19dp"
+		android:text="Hello test message"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+		tools:layout_editor_absoluteX="150dp"
+		tools:layout_editor_absoluteY="300dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
