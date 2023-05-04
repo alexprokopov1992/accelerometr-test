@@ -18,8 +18,10 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import kotlin.math.sqrt
 import androidx.fragment.app.Fragment
 
@@ -28,12 +30,53 @@ class MainActivity : AppCompatActivity() {
     lateinit var mAdView : AdView
     private lateinit var locationManager: LocationManager
     private lateinit var sensorManager: SensorManager
-    private val REQUEST_LOCATION_PERMISSION = 1
+    private var PERM_FINE_LOCATION = false
+    private var PERM_COARSE_LOCATION = false
+    private var PERM_OK = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val textView = findViewById<TextView>(R.id.textView3)
-        textView.text = "Checking permission"
+        textView.text = "Hello"
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION) !==
+            PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            } else {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION) !==
+            PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            } else {
+                ActivityCompat.requestPermissions(this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            PERM_FINE_LOCATION = true
+        }
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            PERM_COARSE_LOCATION = true
+        }
 
         val locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -46,27 +89,59 @@ class MainActivity : AppCompatActivity() {
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
         }
 
-        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            textView.text = "Requesting permission"
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION)
+        if (PERM_OK == false) {
+            if (PERM_COARSE_LOCATION !== true && PERM_FINE_LOCATION !== true) {
+                Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show()
+                textView.text = "Permission denied"
+            } else {
+                textView.text = "Permission Ok"
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    locationListener
+                )
+                PERM_OK = true
+            }
         }
-        textView.text = "Permission granted!"
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-
-
-
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
         MobileAds.initialize(this) {}
-
         mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setContentView(R.layout.activity_main)
+        val textView = findViewById<TextView>(R.id.textView3)
+        if (PERM_OK) {
+            textView.text = "Permission Ok"
+        } else {
+            textView.text = "Permission denied"
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED) {
+                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
+                            Manifest.permission.ACCESS_FINE_LOCATION) ===
+                                PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+
+                return
+            }
+        }
     }
 }
 
