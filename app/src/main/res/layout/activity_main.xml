@@ -9,22 +9,33 @@
 
 	<com.google.android.gms.ads.AdView
 		android:id="@+id/adView"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
 		android:layout_width="match_parent"
 		android:layout_height="100dp"
 		android:layout_centerHorizontal="true"
+		android:visibility="visible"
 		app:adSize="BANNER"
 		app:adUnitId="ca-app-pub-5712910877845845/1176061628"
 		tools:layout_editor_absoluteX="0dp"
-		tools:layout_editor_absoluteY="630dp"></com.google.android.gms.ads.AdView>
+		tools:layout_editor_absoluteY="630dp"
+		tools:visibility="visible"></com.google.android.gms.ads.AdView>
 
 	<TextView
 		android:id="@+id/textView3"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
 		android:layout_width="130dp"
 		android:layout_height="19dp"
-		android:text="Hello test message"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true"
+		android:text="Hello test message"
+		android:visibility="visible"
 		tools:layout_editor_absoluteX="150dp"
-		tools:layout_editor_absoluteY="300dp" />
+		tools:layout_editor_absoluteY="300dp"
+		tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
