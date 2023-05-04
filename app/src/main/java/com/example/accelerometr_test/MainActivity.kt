@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             checkPermissions()
             Thread.sleep(1000)
             tryes++
-            if(tryes > 20) break
+            if(tryes > 60) break
         }
         if (PERM_OK) {
             Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show()
@@ -141,26 +141,5 @@ class MainActivity : AppCompatActivity() {
         Requested = true
     }
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            1 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED) {
-                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
-                            Manifest.permission.ACCESS_FINE_LOCATION) ===
-                                PackageManager.PERMISSION_GRANTED)) {
-                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-                }
-
-                return
-            }
-        }
-    }
 }
 
