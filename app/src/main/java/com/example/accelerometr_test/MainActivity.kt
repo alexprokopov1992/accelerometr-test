@@ -13,10 +13,13 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.SystemClock
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.widget.Chronometer
 
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var mAdView : AdView
@@ -26,6 +29,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var StartButton: Button
     private lateinit var ResetButton: Button
     private lateinit var PauseButton: Button
+    private lateinit var chronometer: Chronometer
+    private var elapsedTime : Long = 0
     private var textGps = "Loading"
     private var WORKING = false
     private var ONPAUSE = false
@@ -53,6 +58,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         StartButton = findViewById(R.id.startButton)
         ResetButton = findViewById(R.id.resetButton)
         PauseButton = findViewById(R.id.pauseButton)
+        chronometer = findViewById(R.id.chronoMeter)
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
@@ -68,7 +74,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
             if (WORKING) {
                 tvGpsLocation.text = "Loading"
                 getLocation()
-                if(GPSPERMISSION) setLastLocation()
+                if(GPSPERMISSION)
+                {
+                    setLastLocation()
+                    chronometer.base = SystemClock.elapsedRealtime()
+                    chronometer.start()
+                }
             }
         }
         ResetButton.setOnClickListener {
@@ -76,6 +87,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 Toast.makeText(this@MainActivity, "Reset meassuring.", Toast.LENGTH_SHORT).show()
                 WORKING = false
                 ONPAUSE = false
+                chronometer.stop()
+                chronometer.base = SystemClock.elapsedRealtime()
                 PauseButton.text = "Pause"
                 tvGpsLocation.text = "Stopped"
                 StartButton.setEnabled(!WORKING)
@@ -99,8 +112,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
                         .show()
                 }
                 if (ONPAUSE) {
+                    elapsedTime = chronometer.getBase() - SystemClock.elapsedRealtime()
+                    chronometer.stop()
                     tvGpsLocation.text = "PAUSED"
                 } else {
+                    chronometer.setBase(SystemClock.elapsedRealtime() + elapsedTime)
+                    chronometer.start()
                     tvGpsLocation.text = "Loading"
                     if(GPSPERMISSION) setLastLocation()
                 }
