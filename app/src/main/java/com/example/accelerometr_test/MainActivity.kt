@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var PauseButton: Button
     private lateinit var chronometer: Chronometer
     private lateinit var Velocity: TextView
+    private lateinit var Distance: TextView
     private var distance: Float = 0.0F
     private var messureTime: Long = 0
     private var gpsSpeed: Float = 0.0F
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         PauseButton = findViewById(R.id.pauseButton)
         chronometer = findViewById(R.id.chronoMeter)
         Velocity = findViewById(R.id.velocity)
+        Distance = findViewById(R.id.distance)
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
@@ -86,6 +88,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     setLastLocation()
                     chronometer.base = SystemClock.elapsedRealtime()
                     chronometer.start()
+                    messureTime = SystemClock.elapsedRealtime()
+                    distance = 0.0f
                 }
             }
         }
@@ -102,6 +106,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 ResetButton.setEnabled(WORKING)
                 PauseButton.setEnabled(WORKING)
                 Velocity.visibility = View.INVISIBLE
+                Distance.visibility = View.INVISIBLE
             } else {
                 tvGpsLocation.text = "Permission error"
                 Toast.makeText(this@MainActivity, "No permissions!.", Toast.LENGTH_SHORT)
@@ -128,6 +133,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     chronometer.start()
                     tvGpsLocation.text = "Loading"
                     if(GPSPERMISSION) setLastLocation()
+                    messureTime = SystemClock.elapsedRealtime()
                 }
             } else {
                 tvGpsLocation.text = "Permission error"
@@ -159,7 +165,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         if(GPSPERMISSION) {
             if (!ONPAUSE && WORKING) {
+                val timePassed:Float = (SystemClock.elapsedRealtime() - messureTime).toFloat() / 1000.0f
+                messureTime = SystemClock.elapsedRealtime()
+                val prevSpeed:Float = gpsSpeed / 3.6f
+                distance += timePassed * prevSpeed
                 gpsSpeed = location.speed * 3.6f
+                Distance.text = distance.toString() + " m"
                 Velocity.text = gpsSpeed.toString() + " km/h"
                 textGps = "Latitude: " + location.latitude + " , Longitude: " + location.longitude
             }
@@ -175,6 +186,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
                 tvGpsLocation.text = "Loading"
                 setLastLocation()
+                messureTime = SystemClock.elapsedRealtime()
             }
             else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -196,7 +208,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
         if (loc !== null) {
             gpsSpeed = loc.speed * 3.6f
             Velocity.text = gpsSpeed.toString() + " km/h"
+            Distance.text = distance.toString() + " m"
             Velocity.visibility = View.VISIBLE
+            Distance.visibility = View.VISIBLE
             textGps = "Latitude: " + loc.latitude + " , Longitude: " + loc.longitude
             tvGpsLocation.text = textGps
         }

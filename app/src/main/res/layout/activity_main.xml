@@ -128,6 +128,7 @@
 		android:layout_marginTop="29dp"
 		android:layout_marginEnd="177dp"
 		android:text="TextView"
+		android:visibility="invisible"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/velocity" />
