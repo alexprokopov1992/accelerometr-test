@@ -13,13 +13,15 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.SystemClock
+import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.widget.Chronometer
+import androidx.annotation.RequiresApi
 
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var mAdView : AdView
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var ResetButton: Button
     private lateinit var PauseButton: Button
     private lateinit var chronometer: Chronometer
+    private lateinit var Velocity: TextView
+    private var gpsSpeed: Float = 0.0F
     private var elapsedTime : Long = 0
     private var textGps = "Loading"
     private var WORKING = false
@@ -59,6 +63,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ResetButton = findViewById(R.id.resetButton)
         PauseButton = findViewById(R.id.pauseButton)
         chronometer = findViewById(R.id.chronoMeter)
+        Velocity = findViewById(R.id.velocity)
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
@@ -94,6 +99,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 StartButton.setEnabled(!WORKING)
                 ResetButton.setEnabled(WORKING)
                 PauseButton.setEnabled(WORKING)
+                Velocity.visibility = View.INVISIBLE
             } else {
                 tvGpsLocation.text = "Permission error"
                 Toast.makeText(this@MainActivity, "No permissions!.", Toast.LENGTH_SHORT)
@@ -147,10 +153,14 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
         if(!GPSPERMISSION) tvGpsLocation.text = "Waiting for permission"
     }
+
     override fun onLocationChanged(location: Location) {
         if(GPSPERMISSION) {
-            if (!ONPAUSE && WORKING)
+            if (!ONPAUSE && WORKING) {
+                gpsSpeed = location.speed * 3.6f
+                Velocity.text = gpsSpeed.toString() + " km/h"
                 textGps = "Latitude: " + location.latitude + " , Longitude: " + location.longitude
+            }
             tvGpsLocation.text = textGps
         } else {
             tvGpsLocation.text = "Waiting for permission"
@@ -182,6 +192,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private fun setLastLocation() {
         var loc = getCurrentLocation()
         if (loc !== null) {
+            gpsSpeed = loc.speed * 3.6f
+            Velocity.text = gpsSpeed.toString() + " km/h"
+            Velocity.visibility = View.VISIBLE
             textGps = "Latitude: " + loc.latitude + " , Longitude: " + loc.longitude
             tvGpsLocation.text = textGps
         }
