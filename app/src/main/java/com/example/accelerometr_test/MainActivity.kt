@@ -41,11 +41,21 @@ class MainActivity : AppCompatActivity() {
     private var ONPAUSE = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WORKING = false
-        ONPAUSE = false
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        itemsInit()
+        buttonsFunctionalityInit()
+        adInit()
+
+    }
+
+    fun itemsInit()
+    {
+        WORKING = false
+        ONPAUSE = false
         textView = findViewById(R.id.textView3)
         StartButton = findViewById(R.id.startButton)
         ResetButton = findViewById(R.id.resetButton)
@@ -53,7 +63,10 @@ class MainActivity : AppCompatActivity() {
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
+    }
 
+    fun buttonsFunctionalityInit()
+    {
         StartButton.setOnClickListener {
             Toast.makeText(this@MainActivity, "Start meassuring.", Toast.LENGTH_SHORT).show()
             WORKING = !WORKING
@@ -81,12 +94,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Pause meassuring.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
+    fun adInit()
+    {
         MobileAds.initialize(this) {}
         mAdView = findViewById(R.id.adView)
         val adRequest = AdRequest.Builder().build()
         mAdView.loadAd(adRequest)
-
     }
 }
 
