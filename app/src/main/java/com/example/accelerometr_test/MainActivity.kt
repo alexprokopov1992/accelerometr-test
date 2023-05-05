@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var PauseButton: Button
     private lateinit var chronometer: Chronometer
     private lateinit var Velocity: TextView
+    private var distance: Float = 0.0F
+    private var messureTime: Long = 0
     private var gpsSpeed: Float = 0.0F
     private var elapsedTime : Long = 0
     private var textGps = "Loading"

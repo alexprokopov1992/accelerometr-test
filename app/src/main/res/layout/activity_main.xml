@@ -96,16 +96,16 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:layout_marginStart="140dp"
-		android:layout_marginTop="56dp"
+		android:layout_marginTop="25dp"
 		android:layout_marginEnd="140dp"
-		android:layout_marginBottom="229dp"
+		android:layout_marginBottom="212dp"
 		android:gravity="center"
 		android:padding="16dp"
 		android:textSize="24sp"
 		app:layout_constraintBottom_toTopOf="@+id/linearLayout"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/velocity" />
+		app:layout_constraintTop_toBottomOf="@+id/distance" />
 
 	<TextView
 		android:id="@+id/velocity"
@@ -119,4 +119,16 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/gpsView" />
+
+	<TextView
+		android:id="@+id/distance"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="176dp"
+		android:layout_marginTop="29dp"
+		android:layout_marginEnd="177dp"
+		android:text="TextView"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/velocity" />
 </androidx.constraintlayout.widget.ConstraintLayout>
