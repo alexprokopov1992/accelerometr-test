@@ -23,7 +23,7 @@ import com.github.anastr.speedviewlib.SpeedView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var mAdView : AdView
@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var PauseButton: Button
     private lateinit var chronometer: Chronometer
     private lateinit var Distance: TextView
+    val coroutineScope = CoroutineScope(Dispatchers.Default)
+    lateinit var job : Job
     private var speedLimit: Float = 100.0f
     private var distance: Float = 0.0F
     private var messureTime: Long = 0
@@ -102,6 +104,14 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 getLocation()
                 if(GPSPERMISSION)
                 {
+                    job = coroutineScope.launch {
+                        while (true) {
+                            if (SystemClock.elapsedRealtime() - messureTime > 10000) {
+                                gpsSpeed = 0.0f
+                            }
+                            delay(1000)
+                        }
+                    }
 //                    speedometer.speedUp()
                     setLastLocation()
                     chronometer.base = SystemClock.elapsedRealtime()
@@ -115,6 +125,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 Toast.makeText(this@MainActivity, "Reset meassuring.", Toast.LENGTH_SHORT).show()
                 maximumSpeed = 0.0f
                 speedometer.slowDown()
+                job.cancel()
                 WORKING = false
                 ONPAUSE = false
                 chronometer.stop()
@@ -261,6 +272,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
             tvGpsLocation.text = textGps
         }
     }
+
+
 }
 
 

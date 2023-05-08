@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature android:name="android.hardware.sensor.accelerometer" />
 
     <application
@@ -16,9 +17,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Accelerometrtest"
         tools:targetApi="31">
+        <receiver
+            android:name=".MyWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_provider_info" />
+        </receiver>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5712910877845845~4185368348"/>
+            android:value="ca-app-pub-5712910877845845~4185368348" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -31,6 +45,3 @@
     </application>
 
 </manifest>
-
-
-
