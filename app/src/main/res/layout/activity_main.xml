@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/mainLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:orientation="vertical"
-    tools:context=".MainActivity">
+	android:background="@color/white"
+	tools:context=".MainActivity">
 
 	<com.google.android.gms.ads.AdView
 		android:id="@+id/adView"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
 		android:layout_width="match_parent"
 		android:layout_height="100dp"
 		android:layout_centerHorizontal="true"
 		android:visibility="visible"
 		app:adSize="BANNER"
 		app:adUnitId="ca-app-pub-5712910877845845/1176061628"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
 		tools:layout_editor_absoluteX="0dp"
 		tools:layout_editor_absoluteY="630dp"
 		tools:visibility="visible"></com.google.android.gms.ads.AdView>
@@ -28,14 +30,13 @@
 		android:layout_height="0dp"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="28dp"
-		android:layout_marginBottom="25dp"
+		android:layout_marginTop="18dp"
 		android:fontFamily="sans-serif-black"
 		android:text="Speedometer"
+		android:textColor="@color/black"
 		android:textSize="34sp"
 		android:typeface="normal"
 		android:visibility="visible"
-		app:layout_constraintBottom_toTopOf="@+id/gpsView"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -80,17 +81,31 @@
 			android:textSize="16sp" />
 	</LinearLayout>
 
+	<com.github.anastr.speedviewlib.SpeedView
+		android:id="@+id/speedView"
+		android:layout_width="204dp"
+		android:layout_height="210dp"
+		android:layout_marginStart="104dp"
+		android:layout_marginEnd="103dp"
+		android:layout_marginBottom="37dp"
+		app:layout_constraintBottom_toTopOf="@+id/maxSpeed"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
+
 	<TextView
 		android:id="@+id/gpsView"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="176dp"
+		android:layout_marginTop="15dp"
 		android:layout_marginEnd="177dp"
-		android:layout_marginBottom="24dp"
+		android:layout_marginBottom="17dp"
 		android:text="TextView"
-		app:layout_constraintBottom_toTopOf="@+id/velocity"
+		android:textColor="@color/black"
+		app:layout_constraintBottom_toTopOf="@+id/speedView"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
 	<Chronometer
 		android:id="@+id/chronoMeter"
@@ -99,26 +114,14 @@
 		android:layout_gravity="center_horizontal"
 		android:layout_marginStart="150dp"
 		android:layout_marginEnd="150dp"
-		android:layout_marginBottom="184dp"
+		android:layout_marginBottom="38dp"
 		android:gravity="center"
 		android:padding="16dp"
+		android:textColor="@color/black"
 		android:textSize="24sp"
 		app:layout_constraintBottom_toTopOf="@+id/linearLayout"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<TextView
-		android:id="@+id/velocity"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="176dp"
-		android:layout_marginEnd="177dp"
-		android:layout_marginBottom="26dp"
-		android:text="TextView"
-		android:visibility="invisible"
-		app:layout_constraintBottom_toTopOf="@+id/maxSpeed"
-		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent" />
 
 	<TextView
@@ -127,8 +130,9 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="176dp"
 		android:layout_marginEnd="177dp"
-		android:layout_marginBottom="72dp"
+		android:layout_marginBottom="49dp"
 		android:text="TextView"
+		android:textColor="@color/black"
 		android:visibility="invisible"
 		app:layout_constraintBottom_toTopOf="@+id/chronoMeter"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -140,8 +144,10 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="176dp"
 		android:layout_marginEnd="177dp"
-		android:layout_marginBottom="37dp"
+		android:layout_marginBottom="36dp"
 		android:text="TextView"
+		android:textAlignment="center"
+		android:textColor="@color/black"
 		app:layout_constraintBottom_toTopOf="@+id/distance"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"

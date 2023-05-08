@@ -16,8 +16,10 @@ import android.widget.Chronometer
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.github.anastr.speedviewlib.SpeedView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
@@ -26,6 +28,8 @@ import com.google.android.gms.ads.MobileAds
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var mAdView : AdView
     lateinit var sensorManager: SensorManager
+    lateinit var speedometer: SpeedView
+    private lateinit var layout: ConstraintLayout
     private lateinit var locationManager: LocationManager
     private lateinit var textView: TextView
     private lateinit var tvGpsLocation: TextView
@@ -34,8 +38,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var ResetButton: Button
     private lateinit var PauseButton: Button
     private lateinit var chronometer: Chronometer
-    private lateinit var Velocity: TextView
     private lateinit var Distance: TextView
+    private var speedLimit: Float = 100.0f
     private var distance: Float = 0.0F
     private var messureTime: Long = 0
     private var gpsSpeed: Float = 0.0F
@@ -62,6 +66,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     {
         WORKING = false
         ONPAUSE = false
+        speedometer = findViewById(R.id.speedView)
         tvGpsLocation = findViewById(R.id.gpsView)
         tvGpsLocation.text = "Stopped"
         textView = findViewById(R.id.textView3)
@@ -70,14 +75,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ResetButton = findViewById(R.id.resetButton)
         PauseButton = findViewById(R.id.pauseButton)
         chronometer = findViewById(R.id.chronoMeter)
-        Velocity = findViewById(R.id.velocity)
+        layout = findViewById(R.id.mainLayout)
         Distance = findViewById(R.id.distance)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
         MaxSpeed.visibility = View.INVISIBLE
-        Velocity.visibility = View.INVISIBLE
         Distance.visibility = View.INVISIBLE
     }
 
@@ -90,11 +94,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
             PauseButton.setEnabled(WORKING)
             distance = 0.0f
             maximumSpeed = 0.0f
+            speedLimit = 100.0f
+            speedometer.setMinMaxSpeed(0.0f, speedLimit)
+            speedometer.setTrembleData(0.1f, 2000)
             if (WORKING) {
                 tvGpsLocation.text = "Loading"
                 getLocation()
                 if(GPSPERMISSION)
                 {
+//                    speedometer.speedUp()
                     setLastLocation()
                     chronometer.base = SystemClock.elapsedRealtime()
                     chronometer.start()
@@ -106,6 +114,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             if(GPSPERMISSION) {
                 Toast.makeText(this@MainActivity, "Reset meassuring.", Toast.LENGTH_SHORT).show()
                 maximumSpeed = 0.0f
+                speedometer.slowDown()
                 WORKING = false
                 ONPAUSE = false
                 chronometer.stop()
@@ -116,8 +125,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 ResetButton.setEnabled(WORKING)
                 PauseButton.setEnabled(WORKING)
                 MaxSpeed.visibility = View.INVISIBLE
-                Velocity.visibility = View.INVISIBLE
                 Distance.visibility = View.INVISIBLE
+                speedLimit = 100.0f
+                speedometer.setMinMaxSpeed(0.0f, speedLimit)
+                speedometer.stop()
             } else {
                 tvGpsLocation.text = "Permission error"
                 Toast.makeText(this@MainActivity, "No permissions!.", Toast.LENGTH_SHORT)
@@ -137,10 +148,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 }
                 if (ONPAUSE) {
                     elapsedTime = chronometer.getBase() - SystemClock.elapsedRealtime()
+                    speedometer.stop()
                     chronometer.stop()
                     tvGpsLocation.text = "PAUSED"
                 } else {
                     chronometer.setBase(SystemClock.elapsedRealtime() + elapsedTime)
+//                    speedometer.speedUp()
                     chronometer.start()
                     tvGpsLocation.text = "Loading"
                     if(GPSPERMISSION) setLastLocation()
@@ -176,15 +189,24 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         if(GPSPERMISSION) {
             if (!ONPAUSE && WORKING) {
-                val timePassed:Float = (SystemClock.elapsedRealtime() - messureTime).toFloat() / 1000.0f
+                val timePassed: Float =
+                    (SystemClock.elapsedRealtime() - messureTime).toFloat() / 1000.0f
                 messureTime = SystemClock.elapsedRealtime()
-                val prevSpeed:Float = gpsSpeed / 3.6f
+                val prevSpeed: Float = gpsSpeed / 3.6f
                 distance += timePassed * prevSpeed
                 gpsSpeed = location.speed * 3.6f
                 if (maximumSpeed < gpsSpeed) maximumSpeed = gpsSpeed
-                Distance.text = distance.toString() + " m"
-                Velocity.text = gpsSpeed.toString() + " km/h"
-                MaxSpeed.text = maximumSpeed.toString() + " km/h"
+                Distance.text = "Distance: " + distance.toString() + " m"
+                MaxSpeed.text = "Maximum velocity: " + maximumSpeed.toString() + " km/h"
+                if (gpsSpeed !== 0.0f) {
+                    var change = false
+                    while (gpsSpeed > speedLimit) {
+                        speedLimit += 10.0f
+                        change = true
+                    }
+                    if (change) speedometer.setMinMaxSpeed(0.0f, speedLimit)
+                    speedometer.speedTo(gpsSpeed)
+                }
                 textGps = "Latitude: " + location.latitude + " , Longitude: " + location.longitude
             }
             tvGpsLocation.text = textGps
@@ -221,10 +243,18 @@ class MainActivity : AppCompatActivity(), LocationListener {
         if (loc !== null) {
             gpsSpeed = loc.speed * 3.6f
             if (maximumSpeed < gpsSpeed) maximumSpeed = gpsSpeed
-            Velocity.text = gpsSpeed.toString() + " km/h"
-            Distance.text = distance.toString() + " m"
-            MaxSpeed.text = maximumSpeed.toString() + " km/h"
-            Velocity.visibility = View.VISIBLE
+            Distance.text = "Distance: " + distance.toString() + " m"
+            MaxSpeed.text = "Maximum velocity: " + maximumSpeed.toString() + " km/h"
+            if (WORKING && !ONPAUSE)
+                if (gpsSpeed !== 0.0f) {
+                    var change = false
+                    while (gpsSpeed > speedLimit) {
+                        speedLimit += 10.0f
+                        change = true
+                    }
+                    if(change) speedometer.setMinMaxSpeed(0.0f,speedLimit)
+                    speedometer.speedTo(gpsSpeed)
+                }
             Distance.visibility = View.VISIBLE
             MaxSpeed.visibility = View.VISIBLE
             textGps = "Latitude: " + loc.latitude + " , Longitude: " + loc.longitude
