@@ -98,11 +98,11 @@
 		android:layout_marginStart="140dp"
 		android:layout_marginTop="25dp"
 		android:layout_marginEnd="140dp"
-		android:layout_marginBottom="212dp"
+		android:layout_marginBottom="54dp"
 		android:gravity="center"
 		android:padding="16dp"
 		android:textSize="24sp"
-		app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+		app:layout_constraintBottom_toTopOf="@+id/accelData"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/distance" />
@@ -132,4 +132,28 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/velocity" />
+
+	<TextView
+		android:id="@+id/accelData"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="176dp"
+		android:layout_marginEnd="177dp"
+		android:layout_marginBottom="34dp"
+		android:text="TextView"
+		app:layout_constraintBottom_toTopOf="@+id/gyroData"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
+
+	<TextView
+		android:id="@+id/gyroData"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="178dp"
+		android:layout_marginEnd="176dp"
+		android:layout_marginBottom="85dp"
+		android:text="TextView"
+		app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
