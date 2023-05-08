@@ -1,43 +1,33 @@
 package com.example.accelerometr_test
 
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
 import android.Manifest
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.hardware.Sensor
-import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
+import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
 import android.widget.Button
+import android.widget.Chronometer
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.widget.Chronometer
-import androidx.annotation.RequiresApi
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+
 
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var mAdView : AdView
     lateinit var sensorManager: SensorManager
-    lateinit var accelerometer: Sensor
-    lateinit var gyroscope: Sensor
-    private var ax : Float = 0.0f
-    private var ay : Float = 0.0f
-    private var az : Float = 0.0f
-    private var gx : Float = 0.0f
-    private var gy : Float = 0.0f
-    private var gz : Float = 0.0f
     private lateinit var locationManager: LocationManager
     private lateinit var textView: TextView
     private lateinit var tvGpsLocation: TextView
@@ -51,7 +41,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var Distance: TextView
     private var distance: Float = 0.0F
     private var messureTime: Long = 0
-    private var AccelerationMessureTime: Long = 0
     private var gpsSpeed: Float = 0.0F
     private var elapsedTime : Long = 0
     private var textGps = "Loading"
@@ -87,58 +76,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         Velocity = findViewById(R.id.velocity)
         Distance = findViewById(R.id.distance)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
     }
-    fun gyroscopeStuff()
-    {
-        sensorManager.registerListener(object : SensorEventListener {
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-                // Do nothing
-            }
 
-            override fun onSensorChanged(event: SensorEvent?) {
-                if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
-                    val prevgx = gx
-                    val prevgy = gy
-                    val prevgz = gz
-                    gx = event.values[0]
-                    gy = event.values[1]
-                    gz = event.values[2]
-                    val timePassed:Float = (SystemClock.elapsedRealtime() - AccelerationMessureTime).toFloat() / 1000.0f
-                    AccelerationMessureTime = SystemClock.elapsedRealtime()
-                    val msg: String = gx.toString() + " " + gy.toString() + " " + gz.toString()
-                    GyroData.text = msg
-                }
-            }
-        }, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
-    }
-    fun accelerometerStuff()
-    {
-        sensorManager.registerListener(object : SensorEventListener {
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-                // Do nothing
-            }
-
-            override fun onSensorChanged(event: SensorEvent?) {
-                if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-                    val prevx = ax
-                    val prevy = ay
-                    val prevz = az
-                    ax = event.values[0]
-                    ay = event.values[1]
-                    az = event.values[2]
-                    val timePassed:Float = (SystemClock.elapsedRealtime() - AccelerationMessureTime).toFloat() / 1000.0f
-                    AccelerationMessureTime = SystemClock.elapsedRealtime()
-                    val msg: String = ax.toString() + " " + ay.toString() + " " + az.toString()
-                    AccelData.text = msg
-                }
-            }
-        }, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
-    }
     fun buttonsFunctionalityInit()
     {
         StartButton.setOnClickListener {
@@ -146,18 +88,16 @@ class MainActivity : AppCompatActivity(), LocationListener {
             StartButton.setEnabled(!WORKING)
             ResetButton.setEnabled(WORKING)
             PauseButton.setEnabled(WORKING)
+            distance = 0.0f
             if (WORKING) {
                 tvGpsLocation.text = "Loading"
                 getLocation()
-                accelerometerStuff()
-                gyroscopeStuff()
                 if(GPSPERMISSION)
                 {
                     setLastLocation()
                     chronometer.base = SystemClock.elapsedRealtime()
                     chronometer.start()
                     messureTime = SystemClock.elapsedRealtime()
-                    distance = 0.0f
                 }
             }
         }
@@ -284,4 +224,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
     }
 }
+
+
 
