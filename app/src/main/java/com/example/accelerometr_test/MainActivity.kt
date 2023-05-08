@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.hardware.Sensor
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
@@ -31,8 +29,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var locationManager: LocationManager
     private lateinit var textView: TextView
     private lateinit var tvGpsLocation: TextView
-    private lateinit var AccelData: TextView
-    private lateinit var GyroData: TextView
+    private lateinit var MaxSpeed: TextView
     private lateinit var StartButton: Button
     private lateinit var ResetButton: Button
     private lateinit var PauseButton: Button
@@ -42,6 +39,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private var distance: Float = 0.0F
     private var messureTime: Long = 0
     private var gpsSpeed: Float = 0.0F
+    private var maximumSpeed: Float = 0.0F
     private var elapsedTime : Long = 0
     private var textGps = "Loading"
     private var WORKING = false
@@ -67,8 +65,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         tvGpsLocation = findViewById(R.id.gpsView)
         tvGpsLocation.text = "Stopped"
         textView = findViewById(R.id.textView3)
-        AccelData = findViewById(R.id.accelData)
-        GyroData = findViewById(R.id.gyroData)
+        MaxSpeed = findViewById(R.id.maxSpeed)
         StartButton = findViewById(R.id.startButton)
         ResetButton = findViewById(R.id.resetButton)
         PauseButton = findViewById(R.id.pauseButton)
@@ -79,6 +76,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
         StartButton.setEnabled(true)
         ResetButton.setEnabled(false)
         PauseButton.setEnabled(false)
+        MaxSpeed.visibility = View.INVISIBLE
+        Velocity.visibility = View.INVISIBLE
+        Distance.visibility = View.INVISIBLE
     }
 
     fun buttonsFunctionalityInit()
@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             ResetButton.setEnabled(WORKING)
             PauseButton.setEnabled(WORKING)
             distance = 0.0f
+            maximumSpeed = 0.0f
             if (WORKING) {
                 tvGpsLocation.text = "Loading"
                 getLocation()
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ResetButton.setOnClickListener {
             if(GPSPERMISSION) {
                 Toast.makeText(this@MainActivity, "Reset meassuring.", Toast.LENGTH_SHORT).show()
+                maximumSpeed = 0.0f
                 WORKING = false
                 ONPAUSE = false
                 chronometer.stop()
@@ -113,6 +115,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 StartButton.setEnabled(!WORKING)
                 ResetButton.setEnabled(WORKING)
                 PauseButton.setEnabled(WORKING)
+                MaxSpeed.visibility = View.INVISIBLE
                 Velocity.visibility = View.INVISIBLE
                 Distance.visibility = View.INVISIBLE
             } else {
@@ -178,8 +181,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 val prevSpeed:Float = gpsSpeed / 3.6f
                 distance += timePassed * prevSpeed
                 gpsSpeed = location.speed * 3.6f
+                if (maximumSpeed < gpsSpeed) maximumSpeed = gpsSpeed
                 Distance.text = distance.toString() + " m"
                 Velocity.text = gpsSpeed.toString() + " km/h"
+                MaxSpeed.text = maximumSpeed.toString() + " km/h"
                 textGps = "Latitude: " + location.latitude + " , Longitude: " + location.longitude
             }
             tvGpsLocation.text = textGps
@@ -215,10 +220,13 @@ class MainActivity : AppCompatActivity(), LocationListener {
         var loc = getCurrentLocation()
         if (loc !== null) {
             gpsSpeed = loc.speed * 3.6f
+            if (maximumSpeed < gpsSpeed) maximumSpeed = gpsSpeed
             Velocity.text = gpsSpeed.toString() + " km/h"
             Distance.text = distance.toString() + " m"
+            MaxSpeed.text = maximumSpeed.toString() + " km/h"
             Velocity.visibility = View.VISIBLE
             Distance.visibility = View.VISIBLE
+            MaxSpeed.visibility = View.VISIBLE
             textGps = "Latitude: " + loc.latitude + " , Longitude: " + loc.longitude
             tvGpsLocation.text = textGps
         }
